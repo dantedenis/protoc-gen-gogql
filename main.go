@@ -32,10 +32,11 @@ func main() {
 }
 
 var (
-	ioPkg      = protogen.GoImportPath("io")
-	fmtPkg     = protogen.GoImportPath("fmt")
-	graphqlPkg = protogen.GoImportPath("github.com/99designs/gqlgen/graphql")
-	contextPkg = protogen.GoImportPath("context")
+	ioPkg         = protogen.GoImportPath("io")
+	fmtPkg        = protogen.GoImportPath("fmt")
+	graphqlPkg    = protogen.GoImportPath("github.com/99designs/gqlgen/graphql")
+	contextPkg    = protogen.GoImportPath("context")
+	emptyTypesPkg = protogen.GoImportPath("github.com/golang/protobuf/ptypes/empty")
 )
 
 func Generate(merge, svc *bool) func(*protogen.Plugin) error {
@@ -90,7 +91,11 @@ func Generate(merge, svc *bool) func(*protogen.Plugin) error {
 						in, inref = "", ", &"+typeIn+"{}"
 					}
 					if IsEmpty(rpc.Output) {
-						g.P("func (s *", svc.GoName, "Resolvers) ", methodName, "(ctx ", contextPkg.Ident("Context"), in, ") (*bool, error) { _, err := s.Service.", rpc.GoName, "(ctx", inref, ")\n return nil, err }")
+						g.P(`
+func (s *`, svc.GoName, `Resolvers) `, methodName, `(ctx `, contextPkg.Ident(`Context`), in, `) (*bool, error) { 
+	err := s.Service.`, rpc.GoName, `(ctx`, inref, `,`, emptyTypesPkg.Ident("Empty"), `)
+	return nil, err 
+}`)
 					} else {
 						g.P(`
 func (s *`, svc.GoName, `Resolvers) `, methodName, `(ctx `, contextPkg.Ident(`Context`), in, `) (*`, typeOut, `, error) { 
