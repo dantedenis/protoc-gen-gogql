@@ -1,6 +1,6 @@
 module github.com/dantedenis/protoc-gen-gogql
 
-go 1.22
+go 1.19
 
 require (
 	github.com/dantedenis/go-proto-gql v0.0.0-20240403165646-616f68a46bb7
