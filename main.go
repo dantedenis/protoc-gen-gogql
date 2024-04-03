@@ -92,7 +92,12 @@ func Generate(merge, svc *bool) func(*protogen.Plugin) error {
 					if IsEmpty(rpc.Output) {
 						g.P("func (s *", svc.GoName, "Resolvers) ", methodName, "(ctx ", contextPkg.Ident("Context"), in, ") (*bool, error) { _, err := s.Service.", rpc.GoName, "(ctx", inref, ")\n return nil, err }")
 					} else {
-						g.P("func (s *", svc.GoName, "Resolvers) ", methodName, "(ctx ", contextPkg.Ident("Context"), in, ") (*", typeOut, ", error) { out := new(", typeOut, ") err :=  s.Service.", rpc.GoName, "(ctx", inref, ", out) return out, err }")
+						g.P(`
+func (s *`, svc.GoName, `Resolvers) `, methodName, `(ctx `, contextPkg.Ident(`Context`), in, `) (*`, typeOut, `, error) { 
+	out := new(`, typeOut, `) 
+	err :=  s.Service.`, rpc.GoName, `(ctx`, inref, `, out) 
+	return out, err 
+}`)
 					}
 				}
 			}
