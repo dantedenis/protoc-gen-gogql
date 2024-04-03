@@ -93,7 +93,7 @@ func Generate(merge, svc *bool) func(*protogen.Plugin) error {
 					if IsEmpty(rpc.Output) {
 						g.P(`
 func (s *`, svc.GoName, `Resolvers) `, methodName, `(ctx `, contextPkg.Ident(`Context`), in, `) (*bool, error) { 
-	err := s.Service.`, rpc.GoName, `(ctx`, inref, `,`, emptyTypesPkg.Ident("Empty"), `)
+	err := s.Service.`, rpc.GoName, `(ctx`, inref, `, &`, emptyTypesPkg.Ident("Empty"), `{})
 	return nil, err 
 }`)
 					} else {
